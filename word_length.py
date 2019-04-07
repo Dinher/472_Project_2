@@ -21,12 +21,13 @@ def tokenizeFreq(file_list, token_dict, email_type):
 				tokenized = [i for i in tokenized if i.strip()]
 				
 				for i in tokenized:
-					if i in token_dict:
-						token_dict[i][email_type+'_frequency'] += 1
-					else:
-						word = {'ham_frequency':  0, 'spam_frequency': 0, 'spam_cond': 0, 'ham_cond':0}
-						word[email_type+'_frequency'] += 1
-						token_dict[i] = word
+					if len(i) <= 2 or len(i) >= 9:
+						if i in token_dict:
+							token_dict[i][email_type+'_frequency'] += 1
+						else:
+							word = {'ham_frequency':  0, 'spam_frequency': 0, 'spam_cond': 0, 'ham_cond':0}
+							word[email_type+'_frequency'] += 1
+							token_dict[i] = word
 
 def getCondProb(token_dict):
 	delta = 0.5
@@ -95,7 +96,7 @@ def classifyTests():
 			to_file += str(line_count) + '  ' + file + '  ' + score[0] + '  ' + str(score[1]) + '  ' + str(score[2]) + '  ' + email_type + '  ' + error + '\n'
 			line_count += 1
 	
-	with open('baseline-result.txt', 'w') as bf:
+	with open('length-result.txt', 'w') as bf:
 		bf.write(to_file)
 	
 	return class_errors

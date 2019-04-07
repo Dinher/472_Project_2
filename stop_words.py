@@ -9,6 +9,11 @@ spam_tokens = {}
 prob = {'ham':0, 'spam':0}
 count = {'ham':0, 'spam':0, 'total_docs':0}
 
+stop_words = []
+with open('English-Stop-Words.txt','r',encoding='latin-1') as file:
+	raw = file.read()
+	stop_words = raw.split('\n')
+
 def tokenizeFreq(file_list, token_dict, email_type):
 	for file_name in file_list:
 		with open('train/'+file_name,'r',encoding='latin-1') as file:
@@ -21,12 +26,13 @@ def tokenizeFreq(file_list, token_dict, email_type):
 				tokenized = [i for i in tokenized if i.strip()]
 				
 				for i in tokenized:
-					if i in token_dict:
-						token_dict[i][email_type+'_frequency'] += 1
-					else:
-						word = {'ham_frequency':  0, 'spam_frequency': 0, 'spam_cond': 0, 'ham_cond':0}
-						word[email_type+'_frequency'] += 1
-						token_dict[i] = word
+					if i not in stop_words:
+						if i in token_dict:
+							token_dict[i][email_type+'_frequency'] += 1
+						else:
+							word = {'ham_frequency':  0, 'spam_frequency': 0, 'spam_cond': 0, 'ham_cond':0}
+							word[email_type+'_frequency'] += 1
+							token_dict[i] = word
 
 def getCondProb(token_dict):
 	delta = 0.5
@@ -95,7 +101,7 @@ def classifyTests():
 			to_file += str(line_count) + '  ' + file + '  ' + score[0] + '  ' + str(score[1]) + '  ' + str(score[2]) + '  ' + email_type + '  ' + error + '\n'
 			line_count += 1
 	
-	with open('baseline-result.txt', 'w') as bf:
+	with open('stop-words-result.txt', 'w') as bf:
 		bf.write(to_file)
 	
 	return class_errors
