@@ -65,6 +65,7 @@ def classifyTraining(a):
 def getScore(doc, z):
 	score = {}
 	tokenized_doc = re.split(r'[^a-zA-Z]',doc)
+	tokenized_doc = [i for i in tokenized_doc if i.strip()]
 	for c in classes:
 		score[c] = 0
 		score[c] = prob[c]
@@ -77,6 +78,7 @@ def getScore(doc, z):
 
 def classifyTests():
 	class_errors = 0
+	to_file = ''
 	for file in list_testing_files:
 		line_count = 1
 		with open('test/'+file,'r', encoding='latin-1') as f:
@@ -89,10 +91,13 @@ def classifyTests():
 			if email_type != score[0]:
 				error = 'wrong'
 				class_errors += 1
-			with open('baseline-result.txt', 'a') as bf:
-				output = str(line_count) + '  ' + file + '  ' + score[0] + '  ' + str(score[1]) + '  ' + str(score[2]) + '  ' + email_type + '  ' + error + '\n'
-				bf.write(output)
-				line_count += 1
+			
+			to_file += str(line_count) + '  ' + file + '  ' + score[0] + '  ' + str(score[1]) + '  ' + str(score[2]) + '  ' + email_type + '  ' + error + '\n'
+			line_count += 1
+	
+	with open('baseline-result.txt', 'a') as bf:
+		bf.write(to_file)
+	
 	return class_errors
 
 
